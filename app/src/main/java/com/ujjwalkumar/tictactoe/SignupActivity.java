@@ -50,29 +50,33 @@ public class SignupActivity extends AppCompatActivity {
                 name = nameBox.getText().toString();
                 email = emailBox.getText().toString();
                 password = passwordBox.getText().toString();
-                auth.createUserWithEmailAndPassword(email, password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
-                    @Override
-                    public void onComplete(@NonNull Task<AuthResult> task) {
-                        if (task.isSuccessful()) {
-                            uid = auth.getUid();
-                            User user = new User(uid, password, email, name);
-                            dbref.child(uid).setValue(user);
-                            sp.edit().putString("name", name).apply();
-                            sp.edit().putString("email", email).apply();
-                            sp.edit().putString("password", password).apply();
-                            sp.edit().putString("uid", uid).apply();
+                if(!name.equals("") && !email.equals("") && !password.equals("")) {
+                    auth.createUserWithEmailAndPassword(email, password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+                        @Override
+                        public void onComplete(@NonNull Task<AuthResult> task) {
+                            if (task.isSuccessful()) {
+                                uid = auth.getUid();
+                                User user = new User(uid, password, email, name);
+                                dbref.child(uid).setValue(user);
+                                sp.edit().putString("name", name).apply();
+                                sp.edit().putString("email", email).apply();
+                                sp.edit().putString("password", password).apply();
+                                sp.edit().putString("uid", uid).apply();
 
-                            Intent in = new Intent();
-                            in.setAction(Intent.ACTION_VIEW);
-                            in.setClass(getApplicationContext(), HomeActivity.class);
-                            in.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
-                            startActivity(in);
-                            finish();
-                        } else {
-                            Toast.makeText(SignupActivity.this, task.getException().getMessage(), Toast.LENGTH_SHORT).show();
+                                Intent in = new Intent();
+                                in.setAction(Intent.ACTION_VIEW);
+                                in.setClass(getApplicationContext(), HomeActivity.class);
+                                in.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+                                startActivity(in);
+                                finish();
+                            } else {
+                                Toast.makeText(SignupActivity.this, task.getException().getMessage(), Toast.LENGTH_SHORT).show();
+                            }
                         }
-                    }
-                });
+                    });
+                }
+                else
+                    Toast.makeText(SignupActivity.this, "Enter name, email & password", Toast.LENGTH_SHORT).show();
             }
         });
 

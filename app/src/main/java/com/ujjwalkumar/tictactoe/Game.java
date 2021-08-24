@@ -100,8 +100,13 @@ public class Game {
             return 1;
         else if (p2)
             return 2;
-        else
-            return 0;
+
+        for(int e: arr) {
+            if(e==0)
+                return 0;
+        }
+
+        return 1;
     }
 
     public void toggleTurn() {
@@ -109,6 +114,14 @@ public class Game {
             this.turn = 2;
         else
             this.turn = 1;
+    }
+
+    public void restartGame() {
+        this.turn = 0;
+        this.status = STATUS_WAITING;
+        this.arr = new ArrayList<>();
+        for (int i = 0; i < 9; i++)
+            arr.add(0);
     }
 
     public String getId() {

@@ -63,12 +63,13 @@
                 android:layout_margin="10dp"
                 android:background="@drawable/textbox"
                 android:drawableLeft="@drawable/email"
-                android:drawablePadding="15dp"
+                android:drawablePadding="12dp"
                 android:drawableTint="@color/custom_grey"
                 android:ems="10"
                 android:hint="Email Address"
                 android:inputType="textEmailAddress"
-                android:padding="15dp" />
+                android:imeOptions="actionNext"
+                android:padding="12dp" />
 
             <EditText
                 android:id="@+id/passwordBox"
@@ -79,12 +80,13 @@
                 android:layout_marginRight="10dp"
                 android:background="@drawable/textbox"
                 android:drawableLeft="@drawable/password"
-                android:drawablePadding="15dp"
+                android:drawablePadding="12dp"
                 android:drawableTint="@color/custom_grey"
                 android:ems="10"
                 android:hint="Password"
                 android:inputType="textPassword"
-                android:padding="15dp" />
+                android:imeOptions="actionDone"
+                android:padding="12dp" />
 
             <TextView
                 android:id="@+id/forgotPassword"

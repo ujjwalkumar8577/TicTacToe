@@ -156,8 +156,10 @@
                     android:id="@+id/editTextID"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginBottom="5dp"
+                    android:layout_marginBottom="4dp"
                     android:hint="Enter room ID"
+                    android:lines="1"
+                    android:inputType="text"
                     android:textColorHint="@color/custom_grey"
                     android:textColor="@color/white"/>
 
@@ -165,8 +167,10 @@
                     android:id="@+id/editTextPassword"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginBottom="5dp"
+                    android:layout_marginBottom="4dp"
                     android:hint="Enter room Password"
+                    android:lines="1"
+                    android:inputType="textPassword"
                     android:textColorHint="@color/custom_grey"
                     android:textColor="@color/white"/>
 

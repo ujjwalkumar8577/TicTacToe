@@ -3,7 +3,11 @@ package com.ujjwalkumar.tictactoe;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.RatingBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -108,10 +112,13 @@ public class TwoPlayerOnlineActivity extends AppCompatActivity {
 
                     if (game.getStatus() == Game.STATUS_P1_WON) {
                         textViewStatus.setText("Player 1 won");
+                        showGameOver("Player 1 won");
                     } else if (game.getStatus() == Game.STATUS_P2_WON) {
                         textViewStatus.setText("Player 2 won");
+                        showGameOver("Player 2 won");
                     } else if (game.getStatus() == Game.STATUS_TIE) {
                         textViewStatus.setText("Game Tied");
+                        showGameOver("Game Tied");
                     }
                 } else
                     textViewStatus.setText("Invalid game ID");
@@ -188,6 +195,59 @@ public class TwoPlayerOnlineActivity extends AppCompatActivity {
             }
         });
         exit.create().show();
+    }
+
+    public void showGameOver(String message) {
+        AlertDialog alertDialog;
+
+        // get xml view
+        LayoutInflater li = LayoutInflater.from(TwoPlayerOnlineActivity.this);
+        View promptsView = li.inflate(R.layout.dialog_game_over, null);
+        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(TwoPlayerOnlineActivity.this);
+        alertDialogBuilder.setView(promptsView);
+        alertDialogBuilder.setCancelable(false);
+
+        // create alert dialog and show it
+        alertDialog = alertDialogBuilder.create();
+        alertDialog.show();
+
+        // get user input
+        final ImageView imageViewClose = promptsView.findViewById(R.id.imageViewClose);
+        final TextView textViewMessage = promptsView.findViewById(R.id.textViewMessage);
+        final LottieAnimationView lottieAnimationView = promptsView.findViewById(R.id.animationView);
+        final Button buttonRestart = promptsView.findViewById(R.id.buttonRestart);
+        final Button buttonExit = promptsView.findViewById(R.id.buttonExit);
+
+        textViewMessage.setText(message);
+
+        imageViewClose.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                alertDialog.dismiss();
+            }
+        });
+
+        buttonRestart.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                game.restartGame();
+                dbref.child(id).setValue(game);
+                alertDialog.dismiss();
+            }
+        });
+
+        buttonExit.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                alertDialog.dismiss();
+                Intent in = new Intent();
+                in.setAction(Intent.ACTION_VIEW);
+                in.setClass(getApplicationContext(), HomeActivity.class);
+                in.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+                startActivity(in);
+                finish();
+            }
+        });
     }
 
     public float calculateRating(User user) {

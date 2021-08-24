@@ -62,6 +62,8 @@ public class LoginActivity extends AppCompatActivity {
                         }
                     });
                 }
+                else
+                    Toast.makeText(LoginActivity.this, "Enter email", Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -70,37 +72,42 @@ public class LoginActivity extends AppCompatActivity {
             public void onClick(View view) {
                 email = emailBox.getText().toString();
                 password = passwordBox.getText().toString();
-                auth.signInWithEmailAndPassword(email, password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
-                    @Override
-                    public void onComplete(@NonNull Task<AuthResult> task) {
-                        if (task.isSuccessful()) {
-                            uid = auth.getUid();
-                            dbref.child(uid).child("name").get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
-                                @Override
-                                public void onComplete(@NonNull Task<DataSnapshot> task) {
-                                    if (task.isSuccessful()) {
-                                        name = task.getResult().getValue().toString();
-                                        sp.edit().putString("name", name).apply();
-                                        sp.edit().putString("email", email).apply();
-                                        sp.edit().putString("password", password).apply();
-                                        sp.edit().putString("uid", uid).apply();
+                if(!email.equals("") && !password.equals("")) {
+                    auth.signInWithEmailAndPassword(email, password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+                        @Override
+                        public void onComplete(@NonNull Task<AuthResult> task) {
+                            if (task.isSuccessful()) {
+                                uid = auth.getUid();
+                                dbref.child(uid).child("name").get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
+                                    @Override
+                                    public void onComplete(@NonNull Task<DataSnapshot> task) {
+                                        if (task.isSuccessful()) {
+                                            name = task.getResult().getValue().toString();
+                                            sp.edit().putString("name", name).apply();
+                                            sp.edit().putString("email", email).apply();
+                                            sp.edit().putString("password", password).apply();
+                                            sp.edit().putString("uid", uid).apply();
 
-                                        Intent in = new Intent();
-                                        in.setAction(Intent.ACTION_VIEW);
-                                        in.setClass(getApplicationContext(), HomeActivity.class);
-                                        in.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
-                                        startActivity(in);
-                                        finish();
-                                    } else {
-                                        Toast.makeText(LoginActivity.this, task.getException().getMessage(), Toast.LENGTH_SHORT).show();
+                                            Intent in = new Intent();
+                                            in.setAction(Intent.ACTION_VIEW);
+                                            in.setClass(getApplicationContext(), HomeActivity.class);
+                                            in.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+                                            startActivity(in);
+                                            finish();
+                                        } else {
+                                            Toast.makeText(LoginActivity.this, task.getException().getMessage(), Toast.LENGTH_SHORT).show();
+                                        }
                                     }
-                                }
-                            });
-                        } else {
-                            Toast.makeText(LoginActivity.this, task.getException().getMessage(), Toast.LENGTH_SHORT).show();
+                                });
+                            } else {
+                                Toast.makeText(LoginActivity.this, task.getException().getMessage(), Toast.LENGTH_SHORT).show();
+                            }
                         }
-                    }
-                });
+                    });
+                }
+                else {
+                    Toast.makeText(LoginActivity.this, "Enter email & password", Toast.LENGTH_SHORT).show();
+                }
             }
         });
 
