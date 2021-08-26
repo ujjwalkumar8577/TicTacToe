@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.RatingBar;
@@ -11,7 +12,9 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.cardview.widget.CardView;
 
+import com.airbnb.lottie.LottieAnimationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
@@ -24,6 +27,8 @@ public class AccountActivity extends AppCompatActivity {
     TextView textViewName, textViewEmail, textViewTotal, textViewWon, textViewTie;
     RatingBar ratingBar;
     Button buttonLogout;
+    LottieAnimationView animationViewLoading;
+    CardView cardView;
 
     private SharedPreferences sp;
     private final FirebaseDatabase fbdb = FirebaseDatabase.getInstance();
@@ -42,7 +47,10 @@ public class AccountActivity extends AppCompatActivity {
         textViewTie = findViewById(R.id.textViewTie);
         ratingBar = findViewById(R.id.ratingBar);
         buttonLogout = findViewById(R.id.buttonLogout);
+        animationViewLoading = findViewById(R.id.animationViewLoading);
+        cardView = findViewById(R.id.cardView);
 
+        cardView.setVisibility(View.GONE);
         sp = getSharedPreferences("user", Activity.MODE_PRIVATE);
         name = sp.getString("name", "User Name");
         email = sp.getString("email", "User Email");
@@ -62,6 +70,8 @@ public class AccountActivity extends AppCompatActivity {
             } else {
                 Toast.makeText(AccountActivity.this, task.getException().getMessage(), Toast.LENGTH_SHORT).show();
             }
+            animationViewLoading.setVisibility(View.GONE);
+            cardView.setVisibility(View.VISIBLE);
         });
 
         imageViewBack.setOnClickListener(view -> {

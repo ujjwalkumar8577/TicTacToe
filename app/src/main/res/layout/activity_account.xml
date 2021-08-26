@@ -29,8 +29,21 @@
         app:layout_constraintStart_toEndOf="@+id/imageViewBack"
         app:layout_constraintTop_toTopOf="@+id/imageViewBack" />
 
+    <com.airbnb.lottie.LottieAnimationView
+        android:id="@+id/animationViewLoading"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="50dp"
+        android:scaleType="centerInside"
+        app:lottie_rawRes="@raw/loadinganimation"
+        app:lottie_autoPlay="true"
+        app:lottie_repeatMode="restart"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/imageViewBack"/>
+
     <com.google.android.material.card.MaterialCardView
-        android:id="@+id/cardView1"
+        android:id="@+id/cardView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="50dp"

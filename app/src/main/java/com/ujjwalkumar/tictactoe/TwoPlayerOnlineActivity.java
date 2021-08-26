@@ -33,6 +33,7 @@ public class TwoPlayerOnlineActivity extends AppCompatActivity {
     TextView textViewName1, textViewName2, textViewStatus;
     LottieAnimationView[] view = new LottieAnimationView[9];
 
+    AlertDialog alertDialog;
     private final FirebaseDatabase fbdb = FirebaseDatabase.getInstance();
     private final DatabaseReference dbref = fbdb.getReference("games");
     private final DatabaseReference dbref2 = fbdb.getReference("users");
@@ -91,6 +92,9 @@ public class TwoPlayerOnlineActivity extends AppCompatActivity {
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 game = snapshot.getValue(Game.class);
                 if (game != null) {
+                    if(alertDialog.isShowing())
+                        alertDialog.dismiss();
+
                     textViewStatus.setText("Player " + game.getTurn() + " turn");
                     for (int i = 0; i < 9; i++) {
                         if (game.getArr(i) == 1)
@@ -179,8 +183,6 @@ public class TwoPlayerOnlineActivity extends AppCompatActivity {
     }
 
     public void showGameOver(String message) {
-        AlertDialog alertDialog;
-
         // get xml view
         LayoutInflater li = LayoutInflater.from(TwoPlayerOnlineActivity.this);
         View promptsView = li.inflate(R.layout.dialog_game_over, null);
@@ -195,7 +197,7 @@ public class TwoPlayerOnlineActivity extends AppCompatActivity {
         // get user input
         final ImageView imageViewClose = promptsView.findViewById(R.id.imageViewClose);
         final TextView textViewMessage = promptsView.findViewById(R.id.textViewMessage);
-        final LottieAnimationView lottieAnimationView = promptsView.findViewById(R.id.animationView);
+        final LottieAnimationView lottieAnimationView = promptsView.findViewById(R.id.lottieAnimationView);
         final Button buttonRestart = promptsView.findViewById(R.id.buttonRestart);
         final Button buttonExit = promptsView.findViewById(R.id.buttonExit);
 
