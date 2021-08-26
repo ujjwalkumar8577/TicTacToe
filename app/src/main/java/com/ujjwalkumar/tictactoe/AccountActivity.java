@@ -4,20 +4,15 @@ import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.RatingBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
@@ -55,41 +50,32 @@ public class AccountActivity extends AppCompatActivity {
         textViewName.setText(name);
         textViewEmail.setText(email);
 
-        dbref.child(uid).get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<DataSnapshot> task) {
-                if (task.isSuccessful()) {
-                    User user = task.getResult().getValue(User.class);
-                    textViewName.setText(user.getName());
-                    ratingBar.setRating(calculateRating(user));
+        dbref.child(uid).get().addOnCompleteListener(task -> {
+            if (task.isSuccessful()) {
+                User user = task.getResult().getValue(User.class);
+                textViewName.setText(user.getName());
+                ratingBar.setRating(calculateRating(user));
 
-                    textViewTotal.setText("Games played : " + user.getTotal());
-                    textViewWon.setText("Games won : " + user.getWon());
-                    textViewTie.setText("Games tied : " + user.getTie());
-                } else {
-                    Toast.makeText(AccountActivity.this, task.getException().getMessage(), Toast.LENGTH_SHORT).show();
-                }
+                textViewTotal.setText("Games played : " + user.getTotal());
+                textViewWon.setText("Games won : " + user.getWon());
+                textViewTie.setText("Games tied : " + user.getTie());
+            } else {
+                Toast.makeText(AccountActivity.this, task.getException().getMessage(), Toast.LENGTH_SHORT).show();
             }
         });
 
-        imageViewBack.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent in = new Intent();
-                in.setAction(Intent.ACTION_VIEW);
-                in.setClass(getApplicationContext(), HomeActivity.class);
-                in.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
-                startActivity(in);
-                finish();
-            }
+        imageViewBack.setOnClickListener(view -> {
+            Intent in = new Intent();
+            in.setAction(Intent.ACTION_VIEW);
+            in.setClass(getApplicationContext(), HomeActivity.class);
+            in.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+            startActivity(in);
+            finish();
         });
 
-        buttonLogout.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                FirebaseAuth.getInstance().signOut();
-                finishAffinity();
-            }
+        buttonLogout.setOnClickListener(view -> {
+            FirebaseAuth.getInstance().signOut();
+            finishAffinity();
         });
     }
 
@@ -97,7 +83,6 @@ public class AccountActivity extends AppCompatActivity {
         if (user.getTotal() == 0)
             return 0;
 
-        float rating = 5.0f * (user.getWon() + 0.5f * user.getTie()) / user.getTotal();
-        return rating;
+        return 5.0f * (user.getWon() + 0.5f * user.getTie()) / user.getTotal();
     }
 }

@@ -10,14 +10,10 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.auth.AuthResult;
+import com.airbnb.lottie.LottieAnimationView;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
@@ -28,6 +24,7 @@ public class LoginActivity extends AppCompatActivity {
     EditText emailBox, passwordBox;
     TextView forgotPassword;
     Button login, createAccount;
+    LottieAnimationView animationViewLoading;
 
     private SharedPreferences sp;
     private final FirebaseAuth auth = FirebaseAuth.getInstance();
@@ -44,83 +41,70 @@ public class LoginActivity extends AppCompatActivity {
         forgotPassword = findViewById(R.id.forgotPassword);
         login = findViewById(R.id.login);
         createAccount = findViewById(R.id.createAccount);
+        animationViewLoading = findViewById(R.id.animationViewLoading);
 
+        animationViewLoading.setVisibility(View.INVISIBLE);
         sp = getSharedPreferences("user", Activity.MODE_PRIVATE);
 
-        forgotPassword.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                String email = emailBox.getText().toString();
-                if (!email.equals("")) {
-                    auth.sendPasswordResetEmail(email).addOnCompleteListener(new OnCompleteListener<Void>() {
-                        @Override
-                        public void onComplete(@NonNull Task<Void> task) {
-                            if (task.isSuccessful())
-                                Toast.makeText(LoginActivity.this, "Reset password email sent", Toast.LENGTH_SHORT).show();
-                            else
-                                Toast.makeText(LoginActivity.this, task.getException().getMessage(), Toast.LENGTH_SHORT).show();
-                        }
-                    });
-                }
-                else
-                    Toast.makeText(LoginActivity.this, "Enter email", Toast.LENGTH_SHORT).show();
+        forgotPassword.setOnClickListener(view -> {
+            String email = emailBox.getText().toString();
+            if (!email.equals("")) {
+                auth.sendPasswordResetEmail(email).addOnCompleteListener(task -> {
+                    if (task.isSuccessful())
+                        Toast.makeText(LoginActivity.this, "Reset password email sent", Toast.LENGTH_SHORT).show();
+                    else
+                        Toast.makeText(LoginActivity.this, task.getException().getMessage(), Toast.LENGTH_SHORT).show();
+                });
             }
+            else
+                Toast.makeText(LoginActivity.this, "Enter email", Toast.LENGTH_SHORT).show();
         });
 
-        login.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                email = emailBox.getText().toString();
-                password = passwordBox.getText().toString();
-                if(!email.equals("") && !password.equals("")) {
-                    auth.signInWithEmailAndPassword(email, password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
-                        @Override
-                        public void onComplete(@NonNull Task<AuthResult> task) {
-                            if (task.isSuccessful()) {
-                                uid = auth.getUid();
-                                dbref.child(uid).child("name").get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
-                                    @Override
-                                    public void onComplete(@NonNull Task<DataSnapshot> task) {
-                                        if (task.isSuccessful()) {
-                                            name = task.getResult().getValue().toString();
-                                            sp.edit().putString("name", name).apply();
-                                            sp.edit().putString("email", email).apply();
-                                            sp.edit().putString("password", password).apply();
-                                            sp.edit().putString("uid", uid).apply();
+        login.setOnClickListener(view -> {
+            email = emailBox.getText().toString();
+            password = passwordBox.getText().toString();
+            if(!email.equals("") && !password.equals("")) {
+                animationViewLoading.setVisibility(View.VISIBLE);
+                auth.signInWithEmailAndPassword(email, password).addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        uid = auth.getUid();
+                        dbref.child(uid).child("name").get().addOnCompleteListener(task1 -> {
+                            if (task1.isSuccessful()) {
+                                name = task1.getResult().getValue().toString();
+                                sp.edit().putString("name", name).apply();
+                                sp.edit().putString("email", email).apply();
+                                sp.edit().putString("password", password).apply();
+                                sp.edit().putString("uid", uid).apply();
 
-                                            Intent in = new Intent();
-                                            in.setAction(Intent.ACTION_VIEW);
-                                            in.setClass(getApplicationContext(), HomeActivity.class);
-                                            in.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
-                                            startActivity(in);
-                                            finish();
-                                        } else {
-                                            Toast.makeText(LoginActivity.this, task.getException().getMessage(), Toast.LENGTH_SHORT).show();
-                                        }
-                                    }
-                                });
+                                Intent in = new Intent();
+                                in.setAction(Intent.ACTION_VIEW);
+                                in.setClass(getApplicationContext(), HomeActivity.class);
+                                in.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+                                startActivity(in);
+                                finish();
                             } else {
-                                Toast.makeText(LoginActivity.this, task.getException().getMessage(), Toast.LENGTH_SHORT).show();
+                                animationViewLoading.setVisibility(View.INVISIBLE);
+                                Toast.makeText(LoginActivity.this, task1.getException().getMessage(), Toast.LENGTH_SHORT).show();
                             }
-                        }
-                    });
-                }
-                else {
-                    Toast.makeText(LoginActivity.this, "Enter email & password", Toast.LENGTH_SHORT).show();
-                }
+                        });
+                    } else {
+                        animationViewLoading.setVisibility(View.INVISIBLE);
+                        Toast.makeText(LoginActivity.this, task.getException().getMessage(), Toast.LENGTH_SHORT).show();
+                    }
+                });
+            }
+            else {
+                Toast.makeText(LoginActivity.this, "Enter email & password", Toast.LENGTH_SHORT).show();
             }
         });
 
-        createAccount.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent in = new Intent();
-                in.setAction(Intent.ACTION_VIEW);
-                in.setClass(getApplicationContext(), SignupActivity.class);
-                in.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
-                startActivity(in);
-                finish();
-            }
+        createAccount.setOnClickListener(view -> {
+            Intent in = new Intent();
+            in.setAction(Intent.ACTION_VIEW);
+            in.setClass(getApplicationContext(), SignupActivity.class);
+            in.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+            startActivity(in);
+            finish();
         });
     }
 }

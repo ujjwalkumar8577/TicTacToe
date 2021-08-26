@@ -1,12 +1,10 @@
 package com.ujjwalkumar.tictactoe;
 
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.RatingBar;
 import android.widget.TextView;
@@ -17,8 +15,6 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.airbnb.lottie.LottieAnimationView;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -72,28 +68,22 @@ public class TwoPlayerOnlineActivity extends AppCompatActivity {
         else
             player = 2;
 
-        dbref2.child(uid1).get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<DataSnapshot> task) {
-                if (task.isSuccessful()) {
-                    user1 = task.getResult().getValue(User.class);
-                    textViewName1.setText(user1.getName());
-                    ratingBar1.setRating(calculateRating(user1));
-                } else
-                    Toast.makeText(TwoPlayerOnlineActivity.this, task.getException().getMessage(), Toast.LENGTH_SHORT).show();
-            }
+        dbref2.child(uid1).get().addOnCompleteListener(task -> {
+            if (task.isSuccessful()) {
+                user1 = task.getResult().getValue(User.class);
+                textViewName1.setText(user1.getName());
+                ratingBar1.setRating(calculateRating(user1));
+            } else
+                Toast.makeText(TwoPlayerOnlineActivity.this, task.getException().getMessage(), Toast.LENGTH_SHORT).show();
         });
 
-        dbref2.child(uid2).get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<DataSnapshot> task) {
-                if (task.isSuccessful()) {
-                    user2 = task.getResult().getValue(User.class);
-                    textViewName2.setText(user2.getName());
-                    ratingBar2.setRating(calculateRating(user2));
-                } else
-                    Toast.makeText(TwoPlayerOnlineActivity.this, task.getException().getMessage(), Toast.LENGTH_SHORT).show();
-            }
+        dbref2.child(uid2).get().addOnCompleteListener(task -> {
+            if (task.isSuccessful()) {
+                user2 = task.getResult().getValue(User.class);
+                textViewName2.setText(user2.getName());
+                ratingBar2.setRating(calculateRating(user2));
+            } else
+                Toast.makeText(TwoPlayerOnlineActivity.this, task.getException().getMessage(), Toast.LENGTH_SHORT).show();
         });
 
         dbref.child(id).addValueEventListener(new ValueEventListener() {
@@ -132,40 +122,37 @@ public class TwoPlayerOnlineActivity extends AppCompatActivity {
 
         for (int i = 0; i < 9; i++) {
             final int pos = i;
-            view[i].setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    if (game.getStatus() == Game.STATUS_RUNNING && game.getTurn() == player && game.getArr(pos) == 0) {
-                        game.setArr(pos, player);
-                        game.toggleTurn();
-                        int winner = game.getWinner();
-                        if (winner == 1) {
-                            game.setStatus(Game.STATUS_P1_WON);
-                            user1.setTotal(user1.getTotal() + 1);
-                            user2.setTotal(user2.getTotal() + 1);
-                            user1.setWon(user1.won + 1);
-                            dbref2.child(uid1).setValue(user1);
-                            dbref2.child(uid2).setValue(user2);
-                        } else if (winner == 2) {
-                            game.setStatus(Game.STATUS_P2_WON);
-                            user1.setTotal(user1.getTotal() + 1);
-                            user2.setTotal(user2.getTotal() + 1);
-                            user2.setWon(user2.won + 1);
-                            dbref2.child(uid1).setValue(user1);
-                            dbref2.child(uid2).setValue(user2);
-                        } else if (winner == 3) {
-                            game.setStatus(Game.STATUS_TIE);
-                            user1.setTotal(user1.getTotal() + 1);
-                            user2.setTotal(user2.getTotal() + 1);
-                            user1.setTie(user1.getTie() + 1);
-                            user2.setTie(user2.getTie() + 1);
-                            dbref2.child(uid1).setValue(user1);
-                            dbref2.child(uid2).setValue(user2);
-                        }
-                        dbref.child(id).setValue(game);
-                    } else {
-                        Toast.makeText(TwoPlayerOnlineActivity.this, "Wait for your turn", Toast.LENGTH_SHORT).show();
+            view[i].setOnClickListener(view -> {
+                if (game.getStatus() == Game.STATUS_RUNNING && game.getTurn() == player && game.getArr(pos) == 0) {
+                    game.setArr(pos, player);
+                    game.toggleTurn();
+                    int winner = game.getWinner();
+                    if (winner == 1) {
+                        game.setStatus(Game.STATUS_P1_WON);
+                        user1.setTotal(user1.getTotal() + 1);
+                        user2.setTotal(user2.getTotal() + 1);
+                        user1.setWon(user1.won + 1);
+                        dbref2.child(uid1).setValue(user1);
+                        dbref2.child(uid2).setValue(user2);
+                    } else if (winner == 2) {
+                        game.setStatus(Game.STATUS_P2_WON);
+                        user1.setTotal(user1.getTotal() + 1);
+                        user2.setTotal(user2.getTotal() + 1);
+                        user2.setWon(user2.won + 1);
+                        dbref2.child(uid1).setValue(user1);
+                        dbref2.child(uid2).setValue(user2);
+                    } else if (winner == 3) {
+                        game.setStatus(Game.STATUS_TIE);
+                        user1.setTotal(user1.getTotal() + 1);
+                        user2.setTotal(user2.getTotal() + 1);
+                        user1.setTie(user1.getTie() + 1);
+                        user2.setTie(user2.getTie() + 1);
+                        dbref2.child(uid1).setValue(user1);
+                        dbref2.child(uid2).setValue(user2);
                     }
+                    dbref.child(id).setValue(game);
+                } else {
+                    Toast.makeText(TwoPlayerOnlineActivity.this, "Wait for your turn", Toast.LENGTH_SHORT).show();
                 }
             });
         }
@@ -177,22 +164,16 @@ public class TwoPlayerOnlineActivity extends AppCompatActivity {
         AlertDialog.Builder exit = new AlertDialog.Builder(this);
         exit.setTitle("Exit");
         exit.setMessage("Do you want to exit?");
-        exit.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                Intent in = new Intent();
-                in.setAction(Intent.ACTION_VIEW);
-                in.setClass(getApplicationContext(), HomeActivity.class);
-                in.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
-                startActivity(in);
-                finish();
-            }
+        exit.setPositiveButton("Yes", (dialog, which) -> {
+            Intent in = new Intent();
+            in.setAction(Intent.ACTION_VIEW);
+            in.setClass(getApplicationContext(), HomeActivity.class);
+            in.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+            startActivity(in);
+            finish();
         });
-        exit.setNegativeButton("No", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
+        exit.setNegativeButton("No", (dialog, which) -> {
 
-            }
         });
         exit.create().show();
     }
@@ -219,34 +200,24 @@ public class TwoPlayerOnlineActivity extends AppCompatActivity {
         final Button buttonExit = promptsView.findViewById(R.id.buttonExit);
 
         textViewMessage.setText(message);
+        lottieAnimationView.playAnimation();
 
-        imageViewClose.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                alertDialog.dismiss();
-            }
+        imageViewClose.setOnClickListener(view -> alertDialog.dismiss());
+
+        buttonRestart.setOnClickListener(view -> {
+            game.restartGame();
+            dbref.child(id).setValue(game);
+            alertDialog.dismiss();
         });
 
-        buttonRestart.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                game.restartGame();
-                dbref.child(id).setValue(game);
-                alertDialog.dismiss();
-            }
-        });
-
-        buttonExit.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                alertDialog.dismiss();
-                Intent in = new Intent();
-                in.setAction(Intent.ACTION_VIEW);
-                in.setClass(getApplicationContext(), HomeActivity.class);
-                in.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
-                startActivity(in);
-                finish();
-            }
+        buttonExit.setOnClickListener(view -> {
+            alertDialog.dismiss();
+            Intent in = new Intent();
+            in.setAction(Intent.ACTION_VIEW);
+            in.setClass(getApplicationContext(), HomeActivity.class);
+            in.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+            startActivity(in);
+            finish();
         });
     }
 
@@ -254,7 +225,6 @@ public class TwoPlayerOnlineActivity extends AppCompatActivity {
         if (user.getTotal() == 0)
             return 0;
 
-        float rating = 5.0f * (user.getWon() + 0.5f * user.getTie()) / user.getTotal();
-        return rating;
+        return 5.0f * (user.getWon() + 0.5f * user.getTie()) / user.getTotal();
     }
 }

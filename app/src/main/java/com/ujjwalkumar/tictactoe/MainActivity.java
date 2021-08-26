@@ -28,21 +28,15 @@ public class MainActivity extends AppCompatActivity {
         Splash = new TimerTask() {
             @Override
             public void run() {
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        Intent in = new Intent();
-                        in.setAction(Intent.ACTION_VIEW);
-
-                        if (FirebaseAuth.getInstance().getCurrentUser() != null)
-                            in.setClass(getApplicationContext(), HomeActivity.class);
-                        else
-                            in.setClass(getApplicationContext(), LoginActivity.class);
-
-                        in.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
-                        startActivity(in);
-                        finish();
-                    }
+                runOnUiThread(() -> {
+                    Intent in = new Intent();
+                    in.setAction(Intent.ACTION_VIEW);
+                    if (FirebaseAuth.getInstance().getCurrentUser() != null)
+                        in.setClass(getApplicationContext(), HomeActivity.class);
+                    else
+                        in.setClass(getApplicationContext(), LoginActivity.class);
+                    startActivity(in);
+                    finish();
                 });
             }
         };

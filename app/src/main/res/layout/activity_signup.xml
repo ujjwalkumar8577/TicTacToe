@@ -65,7 +65,7 @@
                 android:layout_marginRight="10dp"
                 android:layout_marginBottom="10dp"
                 android:background="@drawable/textbox"
-                android:drawableLeft="@drawable/user"
+                android:drawableStart="@drawable/user"
                 android:drawablePadding="12dp"
                 android:drawableTint="@color/custom_grey"
                 android:ems="10"
@@ -80,7 +80,7 @@
                 android:layout_height="wrap_content"
                 android:layout_margin="10dp"
                 android:background="@drawable/textbox"
-                android:drawableLeft="@drawable/email"
+                android:drawableStart="@drawable/email"
                 android:drawablePadding="12dp"
                 android:drawableTint="@color/custom_grey"
                 android:ems="10"
@@ -95,7 +95,7 @@
                 android:layout_height="wrap_content"
                 android:layout_margin="10dp"
                 android:background="@drawable/textbox"
-                android:drawableLeft="@drawable/password"
+                android:drawableStart="@drawable/password"
                 android:drawablePadding="12dp"
                 android:drawableTint="@color/custom_grey"
                 android:ems="10"
@@ -104,10 +104,20 @@
                 android:imeOptions="actionDone"
                 android:padding="12dp" />
 
+            <com.airbnb.lottie.LottieAnimationView
+                android:id="@+id/animationViewLoading"
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                app:lottie_rawRes="@raw/loadinganimation"
+                android:scaleType="centerCrop"
+                app:lottie_autoPlay="true"
+                app:lottie_repeatMode="reverse"/>
+
             <Button
                 android:id="@+id/signup"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
                 android:layout_marginLeft="10dp"
                 android:layout_marginRight="10dp"
                 android:background="@drawable/button1"
@@ -133,7 +143,7 @@
                 android:layout_marginBottom="10dp"
                 android:gravity="center"
                 android:text="By signing up you agree to our privacy policy and terms and conditions."
-                android:textSize="10sp" />
+                android:textSize="11sp" />
         </LinearLayout>
     </androidx.cardview.widget.CardView>
 </androidx.constraintlayout.widget.ConstraintLayout>

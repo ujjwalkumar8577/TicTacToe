@@ -4,11 +4,11 @@ import java.util.ArrayList;
 import java.util.Random;
 
 public class Game {
-    static int STATUS_WAITING = 0;
-    static int STATUS_P1_WON = 1;
-    static int STATUS_P2_WON = 2;
-    static int STATUS_TIE = 3;
-    static int STATUS_RUNNING = 4;
+    static final int STATUS_WAITING = 0;
+    static final int STATUS_P1_WON = 1;
+    static final int STATUS_P2_WON = 2;
+    static final int STATUS_TIE = 3;
+    static final int STATUS_RUNNING = 4;
     String id, pass, uid1, uid2;
     int turn;                   // can be 1 or 2
     int status;                 // can be 0, 1, 2, 3 or 4
@@ -117,7 +117,7 @@ public class Game {
     }
 
     public void restartGame() {
-        this.turn = 0;
+        this.turn = 1;
         this.status = STATUS_WAITING;
         this.arr = new ArrayList<>();
         for (int i = 0; i < 9; i++)

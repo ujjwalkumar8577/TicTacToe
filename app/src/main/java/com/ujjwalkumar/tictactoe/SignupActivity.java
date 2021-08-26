@@ -9,12 +9,9 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.auth.AuthResult;
+import com.airbnb.lottie.LottieAnimationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
@@ -25,6 +22,7 @@ public class SignupActivity extends AppCompatActivity {
 
     EditText nameBox, emailBox, passwordBox;
     Button signup, loginAccount;
+    LottieAnimationView animationViewLoading;
 
     private SharedPreferences sp;
     private final FirebaseAuth auth = FirebaseAuth.getInstance();
@@ -41,55 +39,50 @@ public class SignupActivity extends AppCompatActivity {
         passwordBox = findViewById(R.id.passwordBox);
         signup = findViewById(R.id.signup);
         loginAccount = findViewById(R.id.loginAccount);
+        animationViewLoading = findViewById(R.id.animationViewLoading);
 
+        animationViewLoading.setVisibility(View.INVISIBLE);
         sp = getSharedPreferences("user", Activity.MODE_PRIVATE);
 
-        signup.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                name = nameBox.getText().toString();
-                email = emailBox.getText().toString();
-                password = passwordBox.getText().toString();
-                if(!name.equals("") && !email.equals("") && !password.equals("")) {
-                    auth.createUserWithEmailAndPassword(email, password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
-                        @Override
-                        public void onComplete(@NonNull Task<AuthResult> task) {
-                            if (task.isSuccessful()) {
-                                uid = auth.getUid();
-                                User user = new User(uid, password, email, name);
-                                dbref.child(uid).setValue(user);
-                                sp.edit().putString("name", name).apply();
-                                sp.edit().putString("email", email).apply();
-                                sp.edit().putString("password", password).apply();
-                                sp.edit().putString("uid", uid).apply();
+        signup.setOnClickListener(view -> {
+            name = nameBox.getText().toString();
+            email = emailBox.getText().toString();
+            password = passwordBox.getText().toString();
+            if(!name.equals("") && !email.equals("") && !password.equals("")) {
+                animationViewLoading.setVisibility(View.VISIBLE);
+                auth.createUserWithEmailAndPassword(email, password).addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        uid = auth.getUid();
+                        User user = new User(uid, password, email, name);
+                        dbref.child(uid).setValue(user);
+                        sp.edit().putString("name", name).apply();
+                        sp.edit().putString("email", email).apply();
+                        sp.edit().putString("password", password).apply();
+                        sp.edit().putString("uid", uid).apply();
 
-                                Intent in = new Intent();
-                                in.setAction(Intent.ACTION_VIEW);
-                                in.setClass(getApplicationContext(), HomeActivity.class);
-                                in.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
-                                startActivity(in);
-                                finish();
-                            } else {
-                                Toast.makeText(SignupActivity.this, task.getException().getMessage(), Toast.LENGTH_SHORT).show();
-                            }
-                        }
-                    });
-                }
-                else
-                    Toast.makeText(SignupActivity.this, "Enter name, email & password", Toast.LENGTH_SHORT).show();
+                        Intent in = new Intent();
+                        in.setAction(Intent.ACTION_VIEW);
+                        in.setClass(getApplicationContext(), HomeActivity.class);
+                        in.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+                        startActivity(in);
+                        finish();
+                    } else {
+                        animationViewLoading.setVisibility(View.INVISIBLE);
+                        Toast.makeText(SignupActivity.this, task.getException().getMessage(), Toast.LENGTH_SHORT).show();
+                    }
+                });
             }
+            else
+                Toast.makeText(SignupActivity.this, "Enter name, email & password", Toast.LENGTH_SHORT).show();
         });
 
-        loginAccount.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent in = new Intent();
-                in.setAction(Intent.ACTION_VIEW);
-                in.setClass(getApplicationContext(), LoginActivity.class);
-                in.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
-                startActivity(in);
-                finish();
-            }
+        loginAccount.setOnClickListener(view -> {
+            Intent in = new Intent();
+            in.setAction(Intent.ACTION_VIEW);
+            in.setClass(getApplicationContext(), LoginActivity.class);
+            in.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+            startActivity(in);
+            finish();
         });
     }
 }
