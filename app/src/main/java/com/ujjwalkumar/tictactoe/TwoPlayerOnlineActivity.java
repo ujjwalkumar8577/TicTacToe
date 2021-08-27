@@ -92,7 +92,7 @@ public class TwoPlayerOnlineActivity extends AppCompatActivity {
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 game = snapshot.getValue(Game.class);
                 if (game != null) {
-                    if(alertDialog.isShowing())
+                    if(alertDialog!=null && alertDialog.isShowing())
                         alertDialog.dismiss();
 
                     textViewStatus.setText("Player " + game.getTurn() + " turn");
@@ -101,6 +101,8 @@ public class TwoPlayerOnlineActivity extends AppCompatActivity {
                             view[i].setAnimation(R.raw.circleanimation);
                         else if (game.getArr(i) == 2)
                             view[i].setAnimation(R.raw.crossanimation);
+                        else
+                            view[i].setAnimation(R.raw.blankanimation);
                         view[i].playAnimation();
                     }
 

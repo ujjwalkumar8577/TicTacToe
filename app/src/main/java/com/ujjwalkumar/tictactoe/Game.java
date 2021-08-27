@@ -118,7 +118,7 @@ public class Game {
 
     public void restartGame() {
         this.turn = 1;
-        this.status = STATUS_WAITING;
+        this.status = STATUS_RUNNING;
         this.arr = new ArrayList<>();
         for (int i = 0; i < 9; i++)
             arr.add(0);
