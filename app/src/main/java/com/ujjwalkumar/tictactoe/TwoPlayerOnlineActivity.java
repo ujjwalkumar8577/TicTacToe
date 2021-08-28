@@ -1,7 +1,14 @@
 package com.ujjwalkumar.tictactoe;
 
+import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.media.MediaPlayer;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.VibrationEffect;
+import android.os.Vibrator;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
@@ -26,6 +33,7 @@ public class TwoPlayerOnlineActivity extends AppCompatActivity {
 
     String id, uid1, uid2;
     int player;
+    boolean b1, b2;
     Game game;
     User user1, user2;
 
@@ -34,6 +42,9 @@ public class TwoPlayerOnlineActivity extends AppCompatActivity {
     LottieAnimationView[] view = new LottieAnimationView[9];
 
     AlertDialog alertDialog;
+    Vibrator vibrator;
+    MediaPlayer mediaPlayer;
+    SharedPreferences sp;
     private final FirebaseDatabase fbdb = FirebaseDatabase.getInstance();
     private final DatabaseReference dbref = fbdb.getReference("games");
     private final DatabaseReference dbref2 = fbdb.getReference("users");
@@ -59,6 +70,12 @@ public class TwoPlayerOnlineActivity extends AppCompatActivity {
         view[8] = findViewById(R.id.view8);
 
         textViewStatus.setText("Loading ...");
+        vibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
+        mediaPlayer = MediaPlayer.create(this, R.raw.metaldrop);
+
+        sp = getSharedPreferences("setting", Activity.MODE_PRIVATE);
+        b1 = sp.getBoolean("sound", true);
+        b2 = sp.getBoolean("vibration", true);
 
         Intent in = getIntent();
         id = in.getStringExtra("id");
@@ -68,6 +85,13 @@ public class TwoPlayerOnlineActivity extends AppCompatActivity {
             player = 1;
         else
             player = 2;
+
+//        mediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+//            @Override
+//            public void onCompletion(MediaPlayer mediaPlayer) {
+//                mediaPlayer.release();
+//            }
+//        });
 
         dbref2.child(uid1).get().addOnCompleteListener(task -> {
             if (task.isSuccessful()) {
@@ -91,6 +115,8 @@ public class TwoPlayerOnlineActivity extends AppCompatActivity {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 game = snapshot.getValue(Game.class);
+                if(b1)
+                    mediaPlayer.start();
                 if (game != null) {
                     if(alertDialog!=null && alertDialog.isShowing())
                         alertDialog.dismiss();
@@ -129,6 +155,9 @@ public class TwoPlayerOnlineActivity extends AppCompatActivity {
         for (int i = 0; i < 9; i++) {
             final int pos = i;
             view[i].setOnClickListener(view -> {
+                if(b2)
+                    vibrate();
+
                 if (game.getStatus() == Game.STATUS_RUNNING && game.getTurn() == player && game.getArr(pos) == 0) {
                     game.setArr(pos, player);
                     game.toggleTurn();
@@ -223,6 +252,13 @@ public class TwoPlayerOnlineActivity extends AppCompatActivity {
             startActivity(in);
             finish();
         });
+    }
+
+    public void vibrate() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
+            vibrator.vibrate(VibrationEffect.createOneShot(300, VibrationEffect.DEFAULT_AMPLITUDE));
+        else
+            vibrator.vibrate(300);
     }
 
     public float calculateRating(User user) {
