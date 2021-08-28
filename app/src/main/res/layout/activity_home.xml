@@ -14,7 +14,8 @@
         android:layout_margin="20dp"
         android:src="@drawable/ic_round_account_circle_24"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        android:contentDescription="My Account" />
 
     <ImageView
         android:id="@+id/imageViewSetting"
@@ -23,7 +24,8 @@
         android:layout_margin="20dp"
         android:src="@drawable/ic_round_settings_24"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        android:contentDescription="Settings" />
 
     <TextView
         android:id="@+id/textView"

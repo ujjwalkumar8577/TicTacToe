@@ -21,7 +21,8 @@
         <ImageView
             android:layout_width="40dp"
             android:layout_height="40dp"
-            android:src="@drawable/profile" />
+            android:src="@drawable/profile"
+            android:contentDescription="Player 1" />
 
         <RatingBar
             android:id="@+id/ratingBar1"
@@ -55,7 +56,8 @@
         <ImageView
             android:layout_width="40dp"
             android:layout_height="40dp"
-            android:src="@drawable/profile" />
+            android:src="@drawable/profile"
+            android:contentDescription="Player 2" />
 
         <RatingBar
             android:id="@+id/ratingBar2"

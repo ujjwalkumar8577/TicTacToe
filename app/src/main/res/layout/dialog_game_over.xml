@@ -13,7 +13,8 @@
         android:layout_margin="10dp"
         android:src="@drawable/close"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        android:contentDescription="Dismiss" />
 
     <TextView
         android:id="@+id/textViewMessage"
@@ -47,6 +48,7 @@
         android:background="@drawable/button2"
         android:text="Restart Game"
         android:drawableEnd="@drawable/ic_refresh_white"
+        android:paddingStart="10dp"
         android:paddingEnd="10dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

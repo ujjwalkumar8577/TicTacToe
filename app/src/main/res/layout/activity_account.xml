@@ -14,7 +14,8 @@
         android:layout_margin="20dp"
         android:src="@drawable/ic_arrow_back_white"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        android:contentDescription="Back" />
 
     <TextView
         android:id="@+id/textView4"

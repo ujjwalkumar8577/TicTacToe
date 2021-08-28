@@ -1,15 +1,13 @@
 package com.ujjwalkumar.tictactoe;
 
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.SwitchCompat;
-
 import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.view.View;
-import android.widget.CompoundButton;
 import android.widget.ImageView;
+
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.SwitchCompat;
 
 public class SettingActivity extends AppCompatActivity {
 
@@ -33,32 +31,23 @@ public class SettingActivity extends AppCompatActivity {
         switch1.setChecked(b1);
         switch2.setChecked(b2);
 
-        imageViewBack.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent in = new Intent();
-                in.setAction(Intent.ACTION_VIEW);
-                in.setClass(getApplicationContext(), HomeActivity.class);
-                in.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
-                startActivity(in);
-                finish();
-            }
+        imageViewBack.setOnClickListener(view -> {
+            Intent in = new Intent();
+            in.setAction(Intent.ACTION_VIEW);
+            in.setClass(getApplicationContext(), HomeActivity.class);
+            in.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+            startActivity(in);
+            finish();
         });
 
-        switch1.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
-                if(isChecked)
-                    sp.edit().putBoolean("sound", isChecked).apply();
-            }
+        switch1.setOnCheckedChangeListener((compoundButton, isChecked) -> {
+            if(isChecked)
+                sp.edit().putBoolean("sound", isChecked).apply();
         });
 
-        switch2.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
-                if(isChecked)
-                    sp.edit().putBoolean("vibration", isChecked).apply();
-            }
+        switch2.setOnCheckedChangeListener((compoundButton, isChecked) -> {
+            if(isChecked)
+                sp.edit().putBoolean("vibration", isChecked).apply();
         });
     }
 }
