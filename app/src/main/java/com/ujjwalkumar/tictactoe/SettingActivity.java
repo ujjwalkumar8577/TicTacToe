@@ -40,14 +40,8 @@ public class SettingActivity extends AppCompatActivity {
             finish();
         });
 
-        switch1.setOnCheckedChangeListener((compoundButton, isChecked) -> {
-            if(isChecked)
-                sp.edit().putBoolean("sound", isChecked).apply();
-        });
+        switch1.setOnCheckedChangeListener((compoundButton, isChecked) -> sp.edit().putBoolean("sound", isChecked).apply());
 
-        switch2.setOnCheckedChangeListener((compoundButton, isChecked) -> {
-            if(isChecked)
-                sp.edit().putBoolean("vibration", isChecked).apply();
-        });
+        switch2.setOnCheckedChangeListener((compoundButton, isChecked) -> sp.edit().putBoolean("vibration", isChecked).apply());
     }
 }

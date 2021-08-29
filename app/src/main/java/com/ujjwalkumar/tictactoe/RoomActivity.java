@@ -112,7 +112,7 @@ public class RoomActivity extends AppCompatActivity {
                 textViewID.setText(id);
                 textViewPassword.setText(password);
                 buttonStart.setText("Invite");
-                buttonStart.setBackgroundResource(R.drawable.button3);
+                buttonStart.setBackgroundResource(R.drawable.background_pink_gradient);
                 isStartButton = false;
                 Toast.makeText(RoomActivity.this, "Waiting for other player", Toast.LENGTH_SHORT).show();
 

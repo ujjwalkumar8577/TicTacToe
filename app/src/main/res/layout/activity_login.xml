@@ -54,14 +54,14 @@
                 android:layout_gravity="center"
                 android:layout_marginTop="10dp"
                 android:layout_marginBottom="10dp"
-                android:background="@drawable/background" />
+                android:background="@drawable/background_separator" />
 
             <EditText
                 android:id="@+id/emailBox"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_margin="10dp"
-                android:background="@drawable/textbox"
+                android:background="@drawable/background_textbox"
                 android:drawableStart="@drawable/email"
                 android:drawablePadding="12dp"
                 android:drawableTint="@color/custom_grey"
@@ -78,7 +78,7 @@
                 android:layout_marginLeft="10dp"
                 android:layout_marginTop="10dp"
                 android:layout_marginRight="10dp"
-                android:background="@drawable/textbox"
+                android:background="@drawable/background_textbox"
                 android:drawableStart="@drawable/password"
                 android:drawablePadding="12dp"
                 android:drawableTint="@color/custom_grey"
@@ -104,9 +104,9 @@
                 android:layout_width="match_parent"
                 android:layout_height="40dp"
                 app:lottie_rawRes="@raw/loadinganimation"
-                android:scaleType="fitCenter"
+                android:scaleType="center"
                 app:lottie_autoPlay="true"
-                app:lottie_repeatMode="reverse"/>
+                app:lottie_repeatMode="restart"/>
 
             <Button
                 android:id="@+id/login"
@@ -115,7 +115,7 @@
                 android:layout_marginLeft="10dp"
                 android:layout_marginTop="10dp"
                 android:layout_marginRight="10dp"
-                android:background="@drawable/button2"
+                android:background="@drawable/background_green_gradient"
                 android:text="Login"
                 android:textColor="@color/white" />
 
@@ -127,7 +127,7 @@
                 android:layout_marginTop="10dp"
                 android:layout_marginRight="10dp"
                 android:layout_marginBottom="10dp"
-                android:background="@drawable/button1"
+                android:background="@drawable/background_orange_gradient"
                 android:text="Create an account"
                 android:textColor="@color/white" />
 

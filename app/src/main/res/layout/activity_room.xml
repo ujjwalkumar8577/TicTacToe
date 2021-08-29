@@ -12,7 +12,7 @@
         android:layout_width="40dp"
         android:layout_height="40dp"
         android:layout_margin="20dp"
-        android:src="@drawable/ic_arrow_back_white"
+        android:src="@drawable/back_white"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         android:contentDescription="Back" />
@@ -66,7 +66,7 @@
                 <ImageView
                     android:layout_width="30dp"
                     android:layout_height="30dp"
-                    android:src="@drawable/ic_more_vert_white"
+                    android:src="@drawable/round_expand_more"
                     android:contentDescription="More" />
 
             </LinearLayout>
@@ -100,7 +100,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_margin="20dp"
-                    android:background="@drawable/button2"
+                    android:background="@drawable/background_green_gradient"
                     android:text="Start" />
 
             </LinearLayout>
@@ -144,7 +144,7 @@
                 <ImageView
                     android:layout_width="30dp"
                     android:layout_height="30dp"
-                    android:src="@drawable/ic_more_vert_white"
+                    android:src="@drawable/round_expand_more"
                     android:contentDescription="More" />
 
             </LinearLayout>
@@ -182,7 +182,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_margin="20dp"
-                    android:background="@drawable/button1"
+                    android:background="@drawable/background_orange_gradient"
                     android:text="Join" />
 
             </LinearLayout>
