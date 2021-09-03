@@ -15,13 +15,16 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
 
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.dynamiclinks.DynamicLink;
 import com.google.firebase.dynamiclinks.FirebaseDynamicLinks;
+import com.google.firebase.dynamiclinks.ShortDynamicLink;
 
 public class RoomActivity extends AppCompatActivity {
 
@@ -57,28 +60,21 @@ public class RoomActivity extends AppCompatActivity {
         buttonStart = findViewById(R.id.buttonStart);
         buttonJoin = findViewById(R.id.buttonJoin);
 
-        collapsible1.setVisibility(View.VISIBLE);
-        collapsible2.setVisibility(View.GONE);
-
-        FirebaseDynamicLinks.getInstance()
-                .getDynamicLink(getIntent())
-                .addOnSuccessListener(this, pendingDynamicLinkData -> {
-                    // Get deep link from result (may be null if no link is found)
-                    Uri deepLink = null;
-                    if (pendingDynamicLinkData != null) {
-                        deepLink = pendingDynamicLinkData.getLink();
-                        id = deepLink.getQueryParameter("id");
-                        password = deepLink.getQueryParameter("pass");
-
-                        collapsible1.setVisibility(View.GONE);
-                        collapsible2.setVisibility(View.VISIBLE);
-                        editTextID.setText(id);
-                        editTextPassword.setText(password);
-                    }
-                    // Handle the deep link. For example, open the linked content,
-                    // or apply promotional credit to the user's account.
-                })
-                .addOnFailureListener(this, e -> Toast.makeText(RoomActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show());
+        Intent intent = getIntent();
+        id = intent.getStringExtra("id");
+        password = intent.getStringExtra("password");
+        if(id==null || password==null) {
+            id = "";
+            password = "";
+            collapsible1.setVisibility(View.VISIBLE);
+            collapsible2.setVisibility(View.GONE);
+        }
+        else {
+            collapsible1.setVisibility(View.GONE);
+            collapsible2.setVisibility(View.VISIBLE);
+            editTextID.setText(id);
+            editTextPassword.setText(password);
+        }
 
         imageViewBack.setOnClickListener(view -> {
             Intent in = new Intent();
@@ -139,11 +135,7 @@ public class RoomActivity extends AppCompatActivity {
                     }
                 });
             } else {
-                String tmp = id;
-                Intent ind = new Intent(Intent.ACTION_SEND);
-                ind.setType("text/plain");
-                ind.putExtra(Intent.EXTRA_TEXT, tmp);
-                startActivity(Intent.createChooser(ind, "Share room details"));
+                createDynamicLink(id, password);
             }
         });
 
@@ -179,5 +171,47 @@ public class RoomActivity extends AppCompatActivity {
                 Toast.makeText(RoomActivity.this, "Empty text fields", Toast.LENGTH_SHORT).show();
             }
         });
+    }
+
+    private void createDynamicLink(String param1, String param2) {
+        Task<ShortDynamicLink> shortLinkTask = FirebaseDynamicLinks.getInstance().createDynamicLink()
+                .setLink(Uri.parse("https://www.example.com/?id=" + param1 + "&pass=" + param2))
+                .setDomainUriPrefix("https://tictactoe8577.page.link")
+                .setAndroidParameters(new DynamicLink.AndroidParameters.Builder().build())
+                .setSocialMetaTagParameters( new DynamicLink.SocialMetaTagParameters.Builder()
+                        .setTitle("Join Game")
+                        .setDescription("Play Tic tac toe with your friend")
+                        .setImageUrl(Uri.parse("https://github.com/ujjwalkumar8577/TicTacToe/blob/master/app/src/main/res/mipmap/ic_launcher.PNG"))
+                        .build())
+                .buildShortDynamicLink()
+                .addOnCompleteListener(this, task -> {
+                    if (task.isSuccessful()) {
+                        String tmp = task.getResult().getShortLink().toString();
+                        Intent ind = new Intent(Intent.ACTION_SEND);
+                        ind.setType("text/plain");
+                        ind.putExtra(Intent.EXTRA_TEXT, tmp);
+                        startActivity(Intent.createChooser(ind, "Share room details"));
+                    } else {
+                        Toast.makeText(RoomActivity.this, task.getException().getMessage(), Toast.LENGTH_SHORT).show();
+                    }
+                });
+
+        // Can work offline
+//        DynamicLink dynamicLink = FirebaseDynamicLinks.getInstance().createDynamicLink()
+//                .setLink(Uri.parse("https://www.example.com/?id=" + param1 + "&pass=" + param2))
+//                .setDomainUriPrefix("https://tictactoe8577.page.link")
+//                .setAndroidParameters(new DynamicLink.AndroidParameters.Builder().build())
+//                .setSocialMetaTagParameters( new DynamicLink.SocialMetaTagParameters.Builder()
+//                        .setTitle("Join Game")
+//                        .setDescription("Play Tic tac toe with your friend")
+//                        .setImageUrl(Uri.parse("https://github.com/ujjwalkumar8577/TicTacToe/blob/master/app/src/main/res/mipmap/ic_launcher.PNG"))
+//                        .build())
+//                .buildDynamicLink();
+//
+//        String tmp = dynamicLink.getUri().toString();
+//        Intent ind = new Intent(Intent.ACTION_SEND);
+//        ind.setType("text/plain");
+//        ind.putExtra(Intent.EXTRA_TEXT, tmp);
+//        startActivity(Intent.createChooser(ind, "Share room details"));
     }
 }
