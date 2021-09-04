@@ -86,13 +86,6 @@ public class TwoPlayerOnlineActivity extends AppCompatActivity {
         else
             player = 2;
 
-//        mediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
-//            @Override
-//            public void onCompletion(MediaPlayer mediaPlayer) {
-//                mediaPlayer.release();
-//            }
-//        });
-
         dbref2.child(uid1).get().addOnCompleteListener(task -> {
             if (task.isSuccessful()) {
                 user1 = task.getResult().getValue(User.class);

@@ -95,13 +95,30 @@
                     android:text="Password : "
                     android:textColor="@color/white"/>
 
-                <Button
-                    android:id="@+id/buttonStart"
+                <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_margin="20dp"
-                    android:background="@drawable/background_green_gradient"
-                    android:text="Start" />
+                    android:gravity="center"
+                    android:orientation="horizontal">
+
+                    <Button
+                        android:id="@+id/buttonStart"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:layout_margin="20dp"
+                        android:background="@drawable/background_green_gradient"
+                        android:text="Start" />
+
+                    <ImageView
+                        android:id="@+id/imageViewShowQr"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="20dp"
+                        android:src="@drawable/round_qr_code"
+                        android:contentDescription="Show QR" />
+
+                </LinearLayout>
 
             </LinearLayout>
 
@@ -177,13 +194,30 @@
                     android:textColorHint="@color/custom_grey"
                     android:textColor="@color/white"/>
 
-                <Button
-                    android:id="@+id/buttonJoin"
+                <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_margin="20dp"
-                    android:background="@drawable/background_orange_gradient"
-                    android:text="Join" />
+                    android:gravity="center"
+                    android:orientation="horizontal">
+
+                    <Button
+                        android:id="@+id/buttonJoin"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:layout_margin="20dp"
+                        android:background="@drawable/background_orange_gradient"
+                        android:text="Join" />
+
+                    <ImageView
+                        android:id="@+id/imageViewScanQr"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="20dp"
+                        android:src="@drawable/round_qr_code_scanner"
+                        android:contentDescription="Scan QR" />
+
+                </LinearLayout>
 
             </LinearLayout>
 

@@ -1,8 +1,11 @@
 package com.ujjwalkumar.tictactoe;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -12,6 +15,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
 
@@ -25,19 +29,24 @@ import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.dynamiclinks.DynamicLink;
 import com.google.firebase.dynamiclinks.FirebaseDynamicLinks;
 import com.google.firebase.dynamiclinks.ShortDynamicLink;
+import com.google.zxing.BarcodeFormat;
+import com.google.zxing.WriterException;
+import com.google.zxing.common.BitMatrix;
+import com.google.zxing.qrcode.QRCodeWriter;
 
 public class RoomActivity extends AppCompatActivity {
 
     String id, password;
     boolean isStartButton = true;
 
-    ImageView imageViewBack;
+    ImageView imageViewBack, imageViewShowQr, imageViewScanQr;
     LinearLayout linearLayoutStart, linearLayoutJoin, collapsible1, collapsible2;
     CardView cardView1, cardView2;
     TextView textViewID, textViewPassword;
     EditText editTextID, editTextPassword;
     Button buttonStart, buttonJoin;
 
+    AlertDialog alertDialog;
     private final FirebaseDatabase fbdb = FirebaseDatabase.getInstance();
     private final DatabaseReference dbref = fbdb.getReference("games");
 
@@ -47,6 +56,8 @@ public class RoomActivity extends AppCompatActivity {
         setContentView(R.layout.activity_room);
 
         imageViewBack = findViewById(R.id.imageViewBack);
+        imageViewShowQr = findViewById(R.id.imageViewShowQr);
+        imageViewScanQr = findViewById(R.id.imageViewScanQr);
         linearLayoutStart = findViewById(R.id.linearLayoutStart);
         linearLayoutJoin = findViewById(R.id.linearLayoutJoin);
         collapsible1 = findViewById(R.id.collapsible1);
@@ -59,6 +70,8 @@ public class RoomActivity extends AppCompatActivity {
         editTextPassword = findViewById(R.id.editTextPassword);
         buttonStart = findViewById(R.id.buttonStart);
         buttonJoin = findViewById(R.id.buttonJoin);
+
+        imageViewShowQr.setVisibility(View.INVISIBLE);
 
         Intent intent = getIntent();
         id = intent.getStringExtra("id");
@@ -88,10 +101,6 @@ public class RoomActivity extends AppCompatActivity {
         linearLayoutStart.setOnClickListener(view -> {
             collapsible1.setVisibility(View.VISIBLE);
             collapsible2.setVisibility(View.GONE);
-
-//                ConstraintSet set1 = new ConstraintSet();
-//                set1.connect(imageViewBack.getId(), ConstraintSet.TOP, cardView2.getId(), ConstraintSet.BOTTOM);
-//                set1.applyTo(cardView1);
         });
 
         linearLayoutJoin.setOnClickListener(view -> {
@@ -110,6 +119,7 @@ public class RoomActivity extends AppCompatActivity {
                 buttonStart.setText("Invite");
                 buttonStart.setBackgroundResource(R.drawable.background_pink_gradient);
                 isStartButton = false;
+                imageViewShowQr.setVisibility(View.VISIBLE);
                 Toast.makeText(RoomActivity.this, "Waiting for other player", Toast.LENGTH_SHORT).show();
 
                 dbref.child(id).addValueEventListener(new ValueEventListener() {
@@ -171,6 +181,49 @@ public class RoomActivity extends AppCompatActivity {
                 Toast.makeText(RoomActivity.this, "Empty text fields", Toast.LENGTH_SHORT).show();
             }
         });
+
+        imageViewShowQr.setOnClickListener(view -> {
+            LayoutInflater li = LayoutInflater.from(RoomActivity.this);
+            View promptsView = li.inflate(R.layout.dialog_show_qr, null);
+            AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(RoomActivity.this);
+            alertDialogBuilder.setView(promptsView);
+            alertDialogBuilder.setCancelable(false);
+
+            // create alert dialog and show it
+            alertDialog = alertDialogBuilder.create();
+            alertDialog.show();
+
+            final ImageView imageViewDismiss = promptsView.findViewById(R.id.imageViewDismiss);
+            final ImageView imageViewQr = promptsView.findViewById(R.id.imageViewQr);
+
+            QRCodeWriter writer = new QRCodeWriter();
+            try {
+                String content = id + "#" + password;
+                BitMatrix bitMatrix = writer.encode(content, BarcodeFormat.QR_CODE, 512, 512);
+                int width = bitMatrix.getWidth();
+                int height = bitMatrix.getHeight();
+                Bitmap bmp = Bitmap.createBitmap(width, height, Bitmap.Config.RGB_565);
+                for (int x = 0; x < width; x++) {
+                    for (int y = 0; y < height; y++) {
+                        bmp.setPixel(x, y, bitMatrix.get(x, y) ? Color.BLACK : Color.WHITE);
+                    }
+                }
+                imageViewQr.setImageBitmap(bmp);
+
+            } catch (WriterException e) {
+                Toast.makeText(RoomActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+
+            imageViewDismiss.setOnClickListener(view1 -> alertDialog.dismiss());
+        });
+
+        imageViewScanQr.setOnClickListener(view -> {
+            Intent in = new Intent();
+            in.setAction(Intent.ACTION_VIEW);
+            in.setClass(getApplicationContext(), ScannerActivity.class);
+            in.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+            startActivity(in);
+        });
     }
 
     private void createDynamicLink(String param1, String param2) {
@@ -195,23 +248,5 @@ public class RoomActivity extends AppCompatActivity {
                         Toast.makeText(RoomActivity.this, task.getException().getMessage(), Toast.LENGTH_SHORT).show();
                     }
                 });
-
-        // Can work offline
-//        DynamicLink dynamicLink = FirebaseDynamicLinks.getInstance().createDynamicLink()
-//                .setLink(Uri.parse("https://www.example.com/?id=" + param1 + "&pass=" + param2))
-//                .setDomainUriPrefix("https://tictactoe8577.page.link")
-//                .setAndroidParameters(new DynamicLink.AndroidParameters.Builder().build())
-//                .setSocialMetaTagParameters( new DynamicLink.SocialMetaTagParameters.Builder()
-//                        .setTitle("Join Game")
-//                        .setDescription("Play Tic tac toe with your friend")
-//                        .setImageUrl(Uri.parse("https://github.com/ujjwalkumar8577/TicTacToe/blob/master/app/src/main/res/mipmap/ic_launcher.PNG"))
-//                        .build())
-//                .buildDynamicLink();
-//
-//        String tmp = dynamicLink.getUri().toString();
-//        Intent ind = new Intent(Intent.ACTION_SEND);
-//        ind.setType("text/plain");
-//        ind.putExtra(Intent.EXTRA_TEXT, tmp);
-//        startActivity(Intent.createChooser(ind, "Share room details"));
     }
 }
